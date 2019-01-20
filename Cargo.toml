@@ -1,0 +1,2 @@
+[workspace]
+members = ["batiskaf", "batiskaf_derive"]

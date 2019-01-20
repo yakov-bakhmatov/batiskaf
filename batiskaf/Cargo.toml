@@ -1,0 +1,9 @@
+[package]
+name = "batiskaf"
+version = "0.1.0"
+authors = ["Yakov Bakhmatov <yakov@bakhmatov.ru>"]
+edition = "2018"
+license = "MIT"
+
+[dependencies]
+rusqlite = "0.16.0"
