@@ -1,6 +1,5 @@
 use rusqlite::types::ToSql;
-use rusqlite::{Row, Statement};
-use rusqlite::{self, Connection};
+use rusqlite::{self, Connection, Row, Statement};
 
 #[cfg(test)]
 mod tests;

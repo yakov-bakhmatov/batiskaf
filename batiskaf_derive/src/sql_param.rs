@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
-use syn::{parse_quote, DeriveInput, GenericParam, Generics, Field};
+use syn::{parse_quote, DeriveInput, Field, GenericParam, Generics};
 
 use crate::column::{columns_with_fields, Column};
 
@@ -37,7 +37,7 @@ fn add_trait_bounds(mut generics: Generics) -> Generics {
             type_param
                 .bounds
                 .push(parse_quote!(::rusqlite::types::ToSql));
-            }
+        }
     }
     generics
 }

@@ -128,7 +128,10 @@ fn test_generic() {
     let mut stmt = conn
         .prepare("insert into key_value (key, value) values (:key, :value)")
         .unwrap();
-    let kv = KeyValue::<String> { key: "name".to_string(), value: "Bob".to_string() };
+    let kv = KeyValue::<String> {
+        key: "name".to_string(),
+        value: "Bob".to_string(),
+    };
     let params = kv.to_named_params(&stmt);
     stmt.execute_named(&params).unwrap();
     let mut select = conn.prepare("select key, value from key_value").unwrap();
