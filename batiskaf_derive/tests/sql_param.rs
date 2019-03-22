@@ -29,7 +29,7 @@ fn test_sql_param() {
     stmt.execute_named(&params).unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
     let x = select
-        .query_row(NO_PARAMS, |row| (row.get(0), row.get(1), row.get(2)))
+        .query_row(NO_PARAMS, |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
         .unwrap();
     assert_eq!((1, "Bob".to_string(), 30), x);
 }
@@ -75,7 +75,7 @@ fn test_custom_to_sql() {
     stmt.execute_named(&params).unwrap();
     let mut select = conn.prepare("select id, status from \"order\"").unwrap();
     let x = select
-        .query_row(NO_PARAMS, |row| (row.get(0), row.get(1)))
+        .query_row(NO_PARAMS, |row| Ok((row.get(0)?, row.get(1)?)))
         .unwrap();
     assert_eq!((1, 1), x);
 }
@@ -107,7 +107,7 @@ fn test_skip_param() {
     stmt.execute_named(&params).unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
     let x: (i64, String, Option<u32>) = select
-        .query_row(NO_PARAMS, |row| (row.get(0), row.get(1), row.get(2)))
+        .query_row(NO_PARAMS, |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
         .unwrap();
     assert_eq!((1, "Bob".to_string(), None), x);
 }
@@ -136,7 +136,7 @@ fn test_generic() {
     stmt.execute_named(&params).unwrap();
     let mut select = conn.prepare("select key, value from key_value").unwrap();
     let x: (String, String) = select
-        .query_row(NO_PARAMS, |row| (row.get(0), row.get(1)))
+        .query_row(NO_PARAMS, |row| Ok((row.get(0)?, row.get(1)?)))
         .unwrap();
     assert_eq!(("name".to_string(), "Bob".to_string()), x);
 }

@@ -30,7 +30,7 @@ pub(crate) fn derive(input: DeriveInput) -> TokenStream {
         } else if cf.0.default() {
             quote_spanned! { cf.1.span() =>
                 #name: {
-                    let x = row.get_checked(#param);
+                    let x = row.get(#param);
                     if let Err(::rusqlite::Error::InvalidColumnName(_)) = x {
                         ::std::default::Default::default()
                     } else {
@@ -40,7 +40,7 @@ pub(crate) fn derive(input: DeriveInput) -> TokenStream {
             }
         } else {
             quote_spanned! { cf.1.span() =>
-                #name: row.get_checked(#param)?
+                #name: row.get(#param)?
             }
         }
     });

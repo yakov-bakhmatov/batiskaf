@@ -46,7 +46,7 @@ impl BatiskafConnection for Connection {
         sql: &str,
         params: &[(&str, &dyn ToSql)],
     ) -> rusqlite::Result<T> {
-        self.query_row_named(sql, params, T::from_row)?
+        self.query_row_named(sql, params, T::from_row)
     }
 
     fn select_many<T: SqlResult>(
@@ -57,8 +57,8 @@ impl BatiskafConnection for Connection {
         let mut stmt = self.prepare(sql)?;
         let mut rows = stmt.query_named(params)?;
         let mut result = Vec::new();
-        while let Some(row) = rows.next() {
-            result.push(T::from_row(&row?)?);
+        while let Some(row) = rows.next()? {
+            result.push(T::from_row(&row)?);
         }
         Ok(result)
     }

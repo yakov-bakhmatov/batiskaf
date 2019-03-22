@@ -15,4 +15,4 @@ syn = "0.15"
 
 [dev-dependencies]
 batiskaf = { version = "0.1", path = "../batiskaf" }
-rusqlite = "0.16"
+rusqlite = "0.17"

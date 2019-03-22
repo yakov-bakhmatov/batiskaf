@@ -28,9 +28,9 @@ impl SqlParam for Person {
 impl SqlResult for Person {
     fn from_row(row: &Row) -> rusqlite::Result<Self> {
         Ok(Person {
-            id: row.get_checked("id")?,
-            name: row.get_checked("name")?,
-            age: row.get_checked("age").unwrap_or_default(),
+            id: row.get("id")?,
+            name: row.get("name")?,
+            age: row.get("age").unwrap_or_default(),
         })
     }
 }
@@ -80,7 +80,7 @@ fn test_sql_param() {
     stmt.execute_named(&params).unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
     let x = select
-        .query_row(NO_PARAMS, |row| (row.get(0), row.get(1), row.get(2)))
+        .query_row(NO_PARAMS, |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
         .unwrap();
     assert_eq!((1, "Bob".to_string(), 30), x);
 }
@@ -102,7 +102,7 @@ fn test_sql_result() {
             name: "Alice".to_string(),
             age: Some(33)
         },
-        x.unwrap()
+        x
     );
 }
 
@@ -123,7 +123,7 @@ fn test_sql_result_2() {
             name: "Alice".to_string(),
             age: None
         },
-        x.unwrap()
+        x
     );
 }
 

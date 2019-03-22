@@ -6,4 +6,4 @@ edition = "2018"
 license = "MIT"
 
 [dependencies]
-rusqlite = "0.16.0"
+rusqlite = "0.17"
