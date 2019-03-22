@@ -6,4 +6,8 @@ edition = "2018"
 license = "MIT"
 
 [dependencies]
+batiskaf_derive = { version = "0.1", optional = true, path = "../batiskaf_derive" }
 rusqlite = "0.17"
+
+[features]
+derive = ["batiskaf_derive"]

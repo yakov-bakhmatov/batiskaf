@@ -1,6 +1,15 @@
 use rusqlite::types::ToSql;
 use rusqlite::{self, Connection, Row, Statement};
 
+// Реэкспорт derive-макросов из batiskaf_derive
+#[cfg(feature = "batiskaf_derive")]
+#[allow(unused_imports)]
+#[macro_use]
+extern crate batiskaf_derive;
+#[cfg(feature = "batiskaf_derive")]
+#[doc(hidden)]
+pub use batiskaf_derive::*;
+
 #[cfg(test)]
 mod tests;
 
