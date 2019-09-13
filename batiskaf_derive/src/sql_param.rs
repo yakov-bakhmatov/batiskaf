@@ -16,7 +16,7 @@ pub(crate) fn derive(input: DeriveInput) -> TokenStream {
         let param = &format!(":{}", cf.0.name());
         quote_spanned! { cf.1.span() =>
             if let Ok(Some(_)) = stmt.parameter_index(#param) {
-                params.push((#param, &self.#name as &::rusqlite::types::ToSql));
+                params.push((#param, &self.#name as &dyn ::rusqlite::types::ToSql));
             }
         }
     });

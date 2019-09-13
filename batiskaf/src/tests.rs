@@ -13,13 +13,13 @@ impl SqlParam for Person {
     fn to_named_params(&self, stmt: &Statement) -> Vec<(&str, &dyn ToSql)> {
         let mut params = Vec::new();
         if let Ok(Some(_)) = stmt.parameter_index(":id") {
-            params.push((":id", &self.id as &ToSql));
+            params.push((":id", &self.id as &dyn ToSql));
         }
         if let Ok(Some(_)) = stmt.parameter_index(":name") {
-            params.push((":name", &self.name as &ToSql));
+            params.push((":name", &self.name as &dyn ToSql));
         }
         if let Ok(Some(_)) = stmt.parameter_index(":age") {
-            params.push((":age", &self.age as &ToSql));
+            params.push((":age", &self.age as &dyn ToSql));
         }
         params
     }
@@ -92,7 +92,7 @@ fn test_sql_result() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Alice" as &ToSql), (":age", &33)])
+    stmt.execute_named(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
         .unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
     let x = select.query_row(NO_PARAMS, Person::from_row).unwrap();
@@ -113,7 +113,7 @@ fn test_sql_result_2() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Alice" as &ToSql), (":age", &33)])
+    stmt.execute_named(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
         .unwrap();
     let mut select = conn.prepare("select id, name from person").unwrap();
     let x = select.query_row(NO_PARAMS, Person::from_row).unwrap();
@@ -134,7 +134,7 @@ fn test_select_one() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Alice" as &ToSql), (":age", &33)])
+    stmt.execute_named(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
         .unwrap();
     let x: Person = conn
         .select_one("select id, name, age from person", &[])

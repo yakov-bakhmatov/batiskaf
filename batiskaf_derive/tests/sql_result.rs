@@ -21,7 +21,7 @@ fn test_sql_result() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &ToSql), (":age", &30)])
+    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
     let mut rows = select.query(NO_PARAMS).unwrap();
@@ -55,7 +55,7 @@ fn test_rename() {
     let mut stmt = conn
         .prepare("insert into person (full_name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &ToSql), (":age", &30)])
+    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn
         .prepare("select id, full_name, age from person")
@@ -91,7 +91,7 @@ fn test_skip() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &ToSql), (":age", &30)])
+    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
     let mut rows = select.query(NO_PARAMS).unwrap();
@@ -125,7 +125,7 @@ fn test_default() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &ToSql), (":age", &30)])
+    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name from person").unwrap();
     let mut rows = select.query(NO_PARAMS).unwrap();
@@ -159,7 +159,7 @@ fn test_default_struct() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &ToSql), (":age", &30)])
+    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name from person").unwrap();
     let mut rows = select.query(NO_PARAMS).unwrap();
@@ -191,7 +191,7 @@ fn test_generic() {
     let mut stmt = conn
         .prepare("insert into key_value (key, value) values (:key, :value)")
         .unwrap();
-    stmt.execute_named(&[(":key", &"name" as &ToSql), (":value", &"Bob")])
+    stmt.execute_named(&[(":key", &"name" as &dyn ToSql), (":value", &"Bob")])
         .unwrap();
     let mut select = conn.prepare("select key, value from key_value").unwrap();
     let mut rows = select.query(NO_PARAMS).unwrap();
@@ -218,7 +218,7 @@ fn test_generic_default() {
     let mut stmt = conn
         .prepare("insert into key_value (key, value) values (:key, :value)")
         .unwrap();
-    stmt.execute_named(&[(":key", &"name" as &ToSql), (":value", &"Bob")])
+    stmt.execute_named(&[(":key", &"name" as &dyn ToSql), (":value", &"Bob")])
         .unwrap();
     let mut select = conn.prepare("select key, value from key_value").unwrap();
     let mut rows = select.query(NO_PARAMS).unwrap();

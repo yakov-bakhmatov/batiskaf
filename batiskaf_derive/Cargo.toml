@@ -15,4 +15,9 @@ syn = "0.15"
 
 [dev-dependencies]
 batiskaf = { version = "0.1", path = "../batiskaf" }
+
+[target.'cfg(not(windows))'.dev-dependencies]
 rusqlite = "0.17"
+
+[target.'cfg(windows)'.dev-dependencies]
+rusqlite = { version = "0.17", features = ["bundled"] }
