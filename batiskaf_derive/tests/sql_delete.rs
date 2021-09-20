@@ -10,7 +10,7 @@ fn test_simple_key() {
         id: i64,
         name: String,
         age: Option<u32>,
-    };
+    }
     let sql = Person::delete_statement("person");
     assert_eq!("DELETE FROM person WHERE id = :id", sql);
 }
@@ -25,7 +25,7 @@ fn test_complex_key() {
         #[batiskaf(primary_key)]
         y: i64,
         value: f64,
-    };
+    }
     let sql = FieldValue::delete_statement("height");
     assert_eq!("DELETE FROM height WHERE x = :x AND y = :y", sql);
 }

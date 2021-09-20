@@ -10,7 +10,7 @@ fn test_simple_key() {
         id: i64,
         name: String,
         age: Option<u32>,
-    };
+    }
     let sql = Person::update_statement("person");
     assert_eq!(
         "UPDATE person SET name = :name, age = :age WHERE id = :id",
@@ -28,7 +28,7 @@ fn test_complex_key() {
         #[batiskaf(primary_key)]
         y: i64,
         value: f64,
-    };
+    }
     let sql = FieldValue::update_statement("height");
     assert_eq!(
         "UPDATE height SET value = :value WHERE x = :x AND y = :y",

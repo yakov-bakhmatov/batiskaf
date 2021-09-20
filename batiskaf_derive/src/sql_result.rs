@@ -15,14 +15,14 @@ pub(crate) fn derive(input: DeriveInput) -> TokenStream {
         if c.skip() && !c.default() {
             return syn::Error::new(
                 f.ident.span(),
-                format!("field with `skip` attribute must have `default` attribute"),
+                "field with `skip` attribute must have `default` attribute".to_string(),
             )
             .to_compile_error();
         }
     }
     let tokens = cs.iter().map(|cf| {
         let name = &cf.1.ident;
-        let param = &format!("{}", cf.0.name());
+        let param = cf.0.name();
         if cf.0.skip() {
             quote_spanned! { cf.1.span() =>
                 #name: ::std::default::Default::default()
