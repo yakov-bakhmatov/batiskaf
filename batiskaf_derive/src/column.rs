@@ -78,13 +78,16 @@ pub(crate) fn parse_attributes(attrs: &[Attribute]) -> Attributes {
     let meta: Vec<Meta> = attributes_to_meta(attrs);
     for m in meta {
         match m {
-            Meta::Word(ident) => {
-                a.word.insert(ident.to_string());
+            Meta::Path(path) => {
+                if let Some(ident) = path.get_ident() {
+                    a.word.insert(ident.to_string());
+                }
             }
             Meta::NameValue(name_value) => {
-                if let Lit::Str(lit) = name_value.lit {
-                    a.name_value
-                        .insert(name_value.ident.to_string(), lit.value());
+                if let Some(ident) = name_value.path.get_ident() {
+                    if let Lit::Str(lit) = name_value.lit {
+                        a.name_value.insert(ident.to_string(), lit.value());
+                    }
                 }
             }
             _ => (),
@@ -104,7 +107,7 @@ fn attributes_to_meta(attrs: &[Attribute]) -> Vec<Meta> {
                 None
             }
         })
-        .filter(|m| m.ident.to_string().as_str() == "batiskaf")
+        .filter(|m| m.path.is_ident("batiskaf"))
         .flat_map(|m| m.nested)
         .filter_map(|m| {
             if let NestedMeta::Meta(meta) = m {

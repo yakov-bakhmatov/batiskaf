@@ -1,4 +1,4 @@
-use rusqlite::{Connection, NO_PARAMS};
+use rusqlite::Connection;
 
 use super::*;
 
@@ -59,7 +59,7 @@ impl SqlDelete for Person {
 fn create_table(conn: &Connection) {
     conn.execute(
         "create table person(id integer primary key, name text not null, age integer)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
 }
@@ -77,10 +77,10 @@ fn test_sql_param() {
         age: Some(30),
     };
     let params = person.to_named_params(&stmt);
-    stmt.execute_named(&params).unwrap();
+    stmt.execute(&*params).unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
     let x = select
-        .query_row(NO_PARAMS, |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
+        .query_row([], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))
         .unwrap();
     assert_eq!((1, "Bob".to_string(), 30), x);
 }
@@ -92,10 +92,10 @@ fn test_sql_result() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
+    stmt.execute(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
         .unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
-    let x = select.query_row(NO_PARAMS, Person::from_row).unwrap();
+    let x = select.query_row([], Person::from_row).unwrap();
     assert_eq!(
         Person {
             id: 1,
@@ -113,10 +113,10 @@ fn test_sql_result_2() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
+    stmt.execute(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
         .unwrap();
     let mut select = conn.prepare("select id, name from person").unwrap();
-    let x = select.query_row(NO_PARAMS, Person::from_row).unwrap();
+    let x = select.query_row([], Person::from_row).unwrap();
     assert_eq!(
         Person {
             id: 1,
@@ -134,7 +134,7 @@ fn test_select_one() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
+    stmt.execute(&[(":name", &"Alice" as &dyn ToSql), (":age", &33)])
         .unwrap();
     let x: Person = conn
         .select_one("select id, name, age from person", &[])
@@ -166,8 +166,8 @@ fn test_select_many() {
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&alice.to_named_params(&stmt)).unwrap();
-    stmt.execute_named(&bob.to_named_params(&stmt)).unwrap();
+    stmt.execute(&*alice.to_named_params(&stmt)).unwrap();
+    stmt.execute(&*bob.to_named_params(&stmt)).unwrap();
     let people = conn
         .select_many("select id, name, age from person", &[])
         .unwrap();
@@ -220,7 +220,7 @@ fn test_delete() {
     };
     bob.id = conn.insert("person", &bob).unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
-    assert!(select.exists(NO_PARAMS).unwrap());
+    assert!(select.exists([]).unwrap());
     conn.delete("person", &bob).unwrap();
-    assert!(!select.exists(NO_PARAMS).unwrap());
+    assert!(!select.exists([]).unwrap());
 }

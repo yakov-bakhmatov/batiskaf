@@ -55,7 +55,7 @@ impl BatiskafConnection for Connection {
         sql: &str,
         params: &[(&str, &dyn ToSql)],
     ) -> rusqlite::Result<T> {
-        self.query_row_named(sql, params, T::from_row)
+        self.query_row(sql, params, T::from_row)
     }
 
     fn select_many<T: SqlResult>(
@@ -64,7 +64,7 @@ impl BatiskafConnection for Connection {
         params: &[(&str, &dyn ToSql)],
     ) -> rusqlite::Result<Vec<T>> {
         let mut stmt = self.prepare(sql)?;
-        let mut rows = stmt.query_named(params)?;
+        let mut rows = stmt.query(params)?;
         let mut result = Vec::new();
         while let Some(row) = rows.next()? {
             result.push(T::from_row(&row)?);
@@ -75,7 +75,7 @@ impl BatiskafConnection for Connection {
     fn insert<T: SqlInsert + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<i64> {
         let sql = T::insert_statement(table);
         let mut stmt = self.prepare(&sql)?;
-        let changes = stmt.execute_named(&value.to_named_params(&stmt))?;
+        let changes = stmt.execute(&*value.to_named_params(&stmt))?;
         match changes {
             1 => Ok(self.last_insert_rowid()),
             _ => Err(rusqlite::Error::StatementChangedRows(changes)),
@@ -85,12 +85,12 @@ impl BatiskafConnection for Connection {
     fn update<T: SqlUpdate + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<usize> {
         let sql = T::update_statement(table);
         let mut stmt = self.prepare(&sql)?;
-        stmt.execute_named(&value.to_named_params(&stmt))
+        stmt.execute(&*value.to_named_params(&stmt))
     }
 
     fn delete<T: SqlDelete + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<usize> {
         let sql = T::delete_statement(table);
         let mut stmt = self.prepare(&sql)?;
-        stmt.execute_named(&value.to_named_params(&stmt))
+        stmt.execute(&*value.to_named_params(&stmt))
     }
 }

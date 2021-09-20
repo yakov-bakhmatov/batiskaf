@@ -1,6 +1,6 @@
 [package]
 name = "batiskaf_derive"
-version = "0.17.0"
+version = "0.25.0"
 authors = ["Yakov Bakhmatov <yakov@bakhmatov.ru>"]
 edition = "2018"
 license = "MIT"
@@ -9,15 +9,15 @@ license = "MIT"
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "0.4"
-quote = "0.6"
-syn = "0.15"
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = "1.0"
 
 [dev-dependencies]
-batiskaf = { version = "0.17", path = "../batiskaf" }
+batiskaf = { version = "0.25", path = "../batiskaf" }
 
 [target.'cfg(not(windows))'.dev-dependencies]
-rusqlite = "0.17"
+rusqlite = "0.25"
 
 [target.'cfg(windows)'.dev-dependencies]
-rusqlite = { version = "0.17", features = ["bundled"] }
+rusqlite = { version = "0.25", features = ["bundled"] }

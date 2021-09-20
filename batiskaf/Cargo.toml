@@ -1,13 +1,13 @@
 [package]
 name = "batiskaf"
-version = "0.17.0"
+version = "0.25.0"
 authors = ["Yakov Bakhmatov <yakov@bakhmatov.ru>"]
 edition = "2018"
 license = "MIT"
 
 [dependencies]
-batiskaf_derive = { version = "0.17", optional = true, path = "../batiskaf_derive" }
-rusqlite = "0.17"
+batiskaf_derive = { version = "0.25", optional = true, path = "../batiskaf_derive" }
+rusqlite = "0.25"
 
 [features]
 derive = ["batiskaf_derive"]

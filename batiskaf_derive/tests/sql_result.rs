@@ -1,5 +1,5 @@
 use rusqlite::types::ToSql;
-use rusqlite::{Connection, NO_PARAMS};
+use rusqlite::Connection;
 
 use batiskaf::SqlResult;
 use batiskaf_derive::*;
@@ -15,16 +15,16 @@ fn test_sql_result() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table person (id integer primary key, name text not null, age integer)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
+    stmt.execute(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let bob = Person::from_row(&row).unwrap();
     assert_eq!(
@@ -49,18 +49,18 @@ fn test_rename() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table person (id integer primary key, full_name text not null, age integer)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into person (full_name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
+    stmt.execute(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn
         .prepare("select id, full_name, age from person")
         .unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let bob = Person::from_row(&row).unwrap();
     assert_eq!(
@@ -85,16 +85,16 @@ fn test_skip() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table person (id integer primary key, name text not null, age integer)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
+    stmt.execute(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name, age from person").unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let bob = Person::from_row(&row).unwrap();
     assert_eq!(
@@ -119,16 +119,16 @@ fn test_default() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table person (id integer primary key, name text not null, age integer)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
+    stmt.execute(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name from person").unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let bob = Person::from_row(&row).unwrap();
     assert_eq!(
@@ -153,16 +153,16 @@ fn test_default_struct() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table person (id integer primary key, name text not null, age integer)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into person (name, age) values (:name, :age)")
         .unwrap();
-    stmt.execute_named(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
+    stmt.execute(&[(":name", &"Bob" as &dyn ToSql), (":age", &30)])
         .unwrap();
     let mut select = conn.prepare("select id, name from person").unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let bob = Person::from_row(&row).unwrap();
     assert_eq!(
@@ -185,16 +185,16 @@ fn test_generic() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table key_value (key text not null, value text not null)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into key_value (key, value) values (:key, :value)")
         .unwrap();
-    stmt.execute_named(&[(":key", &"name" as &dyn ToSql), (":value", &"Bob")])
+    stmt.execute(&[(":key", &"name" as &dyn ToSql), (":value", &"Bob")])
         .unwrap();
     let mut select = conn.prepare("select key, value from key_value").unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let bob = KeyValue::<String>::from_row(&row).unwrap();
     assert_eq!("name".to_string(), bob.key);
@@ -212,16 +212,16 @@ fn test_generic_default() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table key_value (key text not null, value text not null)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into key_value (key, value) values (:key, :value)")
         .unwrap();
-    stmt.execute_named(&[(":key", &"name" as &dyn ToSql), (":value", &"Bob")])
+    stmt.execute(&[(":key", &"name" as &dyn ToSql), (":value", &"Bob")])
         .unwrap();
     let mut select = conn.prepare("select key, value from key_value").unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let bob = KeyValue::<String>::from_row(&row).unwrap();
     assert_eq!("name".to_string(), bob.key);
@@ -258,15 +258,15 @@ fn test_custom_from_sql() {
     let conn = Connection::open_in_memory().unwrap();
     conn.execute(
         "create table \"order\" (id integer primary key, status integer)",
-        NO_PARAMS,
+        [],
     )
     .unwrap();
     let mut stmt = conn
         .prepare("insert into \"order\" (status) values (:status)")
         .unwrap();
-    stmt.execute_named(&[(":status", &1)]).unwrap();
+    stmt.execute(&[(":status", &1)]).unwrap();
     let mut select = conn.prepare("select id, status from \"order\"").unwrap();
-    let mut rows = select.query(NO_PARAMS).unwrap();
+    let mut rows = select.query([]).unwrap();
     let row = rows.next().unwrap().unwrap();
     let order = Order::from_row(&row).unwrap();
     assert_eq!(
