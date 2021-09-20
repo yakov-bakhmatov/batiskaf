@@ -1,6 +1,6 @@
 [package]
 name = "batiskaf_derive"
-version = "0.1.0"
+version = "0.17.0"
 authors = ["Yakov Bakhmatov <yakov@bakhmatov.ru>"]
 edition = "2018"
 license = "MIT"
@@ -14,7 +14,7 @@ quote = "0.6"
 syn = "0.15"
 
 [dev-dependencies]
-batiskaf = { version = "0.1", path = "../batiskaf" }
+batiskaf = { version = "0.17", path = "../batiskaf" }
 
 [target.'cfg(not(windows))'.dev-dependencies]
 rusqlite = "0.17"
