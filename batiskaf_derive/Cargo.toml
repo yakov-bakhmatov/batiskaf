@@ -1,6 +1,6 @@
 [package]
 name = "batiskaf_derive"
-version = "0.25.0"
+version = "0.25.1"
 authors = ["Yakov Bakhmatov <yakov@bakhmatov.ru>"]
 edition = "2018"
 license = "MIT"
