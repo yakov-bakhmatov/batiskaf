@@ -50,6 +50,18 @@ impl SqlUpdate for Person {
     }
 }
 
+impl SqlUpsert for Person {
+    fn upsert_statement(table: &str) -> String {
+        format!(
+            "insert into {} (id, name, age) values (:id, :name, :age) \
+            on conflict (id) do update set \
+            name = excluded.name, \
+            age = excluded.age",
+            table
+        )
+    }
+}
+
 impl SqlDelete for Person {
     fn delete_statement(table: &str) -> String {
         format!("delete from {} where id = :id", table)
@@ -203,6 +215,29 @@ fn test_update() {
     bob.name = "Bob Smith".to_string();
     bob.age = None;
     conn.update("person", &bob).unwrap();
+    let x: Person = conn
+        .select_one("select id, name, age from person", &[])
+        .unwrap();
+    assert_eq!(bob, x);
+}
+
+#[test]
+fn test_upsert() {
+    let conn = Connection::open_in_memory().unwrap();
+    create_table(&conn);
+    let mut bob = Person {
+        id: 0,
+        name: "Bob".to_string(),
+        age: Some(30),
+    };
+    bob.id = conn.upsert("person", &bob).unwrap();
+    let x: Person = conn
+        .select_one("select id, name, age from person", &[])
+        .unwrap();
+    assert_eq!(bob, x);
+    bob.name = "Bob Smith".to_string();
+    bob.age = None;
+    conn.upsert("person", &bob).unwrap();
     let x: Person = conn
         .select_one("select id, name, age from person", &[])
         .unwrap();

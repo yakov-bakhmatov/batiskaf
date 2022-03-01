@@ -29,6 +29,10 @@ pub trait SqlUpdate {
     fn update_statement(table: &str) -> String;
 }
 
+pub trait SqlUpsert {
+    fn upsert_statement(table: &str) -> String;
+}
+
 pub trait SqlDelete {
     fn delete_statement(table: &str) -> String;
 }
@@ -46,6 +50,7 @@ pub trait BatiskafConnection {
     ) -> rusqlite::Result<Vec<T>>;
     fn insert<T: SqlInsert + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<i64>;
     fn update<T: SqlUpdate + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<usize>;
+    fn upsert<T: SqlUpsert + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<i64>;
     fn delete<T: SqlDelete + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<usize>;
 }
 
@@ -86,6 +91,17 @@ impl BatiskafConnection for Connection {
         let sql = T::update_statement(table);
         let mut stmt = self.prepare(&sql)?;
         stmt.execute(&*value.to_named_params(&stmt))
+    }
+
+    fn upsert<T: SqlUpsert + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<i64> {
+        let sql = T::upsert_statement(table);
+        let mut stmt = self.prepare(&sql)?;
+        let changes = stmt.execute(&*value.to_named_params(&stmt))?;
+        // TODO: если был update, то в last_insert_rowid() вернётся не то, что ожидается
+        match changes {
+            1 => Ok(self.last_insert_rowid()),
+            _ => Err(rusqlite::Error::StatementChangedRows(changes)),
+        }
     }
 
     fn delete<T: SqlDelete + SqlParam>(&self, table: &str, value: &T) -> rusqlite::Result<usize> {

@@ -36,6 +36,12 @@ SqlUpdate
 - primary_key
 - skip
 
+SqlUpsert
+атрибуты полей:
+- column
+- primary_key
+- skip
+
 SqlDelete
 атрибуты полей:
 - column
@@ -54,6 +60,7 @@ mod sql_insert;
 mod sql_param;
 mod sql_result;
 mod sql_update;
+mod sql_upsert;
 
 #[proc_macro_derive(SqlParam, attributes(batiskaf))]
 pub fn derive_sql_param(input: TokenStream) -> TokenStream {
@@ -77,6 +84,12 @@ pub fn derive_sql_insert(input: TokenStream) -> TokenStream {
 pub fn derive_sql_update(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     sql_update::derive(input).into()
+}
+
+#[proc_macro_derive(SqlUpsert, attributes(batiskaf))]
+pub fn derive_sql_upsert(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    sql_upsert::derive(input).into()
 }
 
 #[proc_macro_derive(SqlDelete, attributes(batiskaf))]
